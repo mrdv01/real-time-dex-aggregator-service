@@ -13,11 +13,11 @@ export const RATE_LIMITS = {
     window: parseInt(process.env.RATE_LIMIT_DEXSCREENER_WINDOW || '60000'),
   },
   jupiter: {
-    max: parseInt(process.env.RATE_LIMIT_JUPITER_MAX || '50'),
+    max: parseInt(process.env.RATE_LIMIT_JUPITER_MAX || '59'),
     window: parseInt(process.env.RATE_LIMIT_JUPITER_WINDOW || '60000'),
   },
   geckoterminal: {
-    max: parseInt(process.env.RATE_LIMIT_GECKOTERMINAL_MAX || '25'),
+    max: parseInt(process.env.RATE_LIMIT_GECKOTERMINAL_MAX || '29'),
     window: parseInt(process.env.RATE_LIMIT_GECKOTERMINAL_WINDOW || '60000'),
   },
 };
@@ -30,8 +30,8 @@ export const CACHE_CONFIG = {
 
 export const WEBSOCKET_CONFIG = {
   UPDATE_INTERVAL: parseInt(process.env.WS_UPDATE_INTERVAL || '10000'),
-  PRICE_CHANGE_THRESHOLD: parseFloat(process.env.WS_PRICE_CHANGE_THRESHOLD || '5'),
-  VOLUME_SPIKE_MULTIPLIER: parseFloat(process.env.WS_VOLUME_SPIKE_MULTIPLIER || '2'),
+  PRICE_CHANGE_THRESHOLD: parseFloat(process.env.WS_PRICE_CHANGE_THRESHOLD || '0.15'),
+  VOLUME_SPIKE_MULTIPLIER: parseFloat(process.env.WS_VOLUME_SPIKE_MULTIPLIER || '1.2'),
 };
 
 export const BACKOFF_CONFIG = {
