@@ -39,3 +39,5 @@ dump.rdb
 
 # Demo
 demo/demo-script.md
+
+postman_collection.json
