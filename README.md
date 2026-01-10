@@ -13,13 +13,18 @@ A production-ready real-time meme coin data aggregation service that fetches dat
 - **Type-Safe**: Full TypeScript implementation with strict typing
 - **Well-Tested**:code coverage with unit and integration tests
 
+##  Deployment
+
+- **API Service**: [https://real-time-dex-aggregator-service.onrender.com](https://real-time-dex-aggregator-service.onrender.com)
+- **Frontend App**: [https://real-time-dex-aggregator-frontend.vercel.app/](https://real-time-dex-aggregator-frontend.vercel.app/)
+
 ## Prerequisites
 
 - Node.js 18+ and npm
 - Redis 7+ (via Docker or local installation)
 - Jupiter API key
 
-## 🛠️ Installation
+##  Installation
 
 1. **Clone the repository**
    ```bash
@@ -64,7 +69,7 @@ The server will start at `http://localhost:3000`.
 
 See [`.env.example`](.env.example) for complete list.
 
-## 📡 API Endpoints
+##  API Endpoints
 
 ### GET /api/tokens
 
@@ -159,7 +164,7 @@ API usage statistics.
 }
 ```
 
-## 🔌 WebSocket Events
+##  WebSocket Events
 
 Connect to WebSocket at `ws://localhost:3000`.
 
@@ -273,8 +278,8 @@ npm test -- --coverage
 ## Performance
 
 - **API Response Time**:
-  - First request (cache miss): ~200-250ms
-  - Cached requests: <50ms
+  - First request (cache miss): ~600-750ms
+  - Cached requests: <400ms
   - Cache hit rate: >80% after warm-up
 
 - **Rate Limiting**:
@@ -286,7 +291,7 @@ npm test -- --coverage
   - Update interval: 10 seconds
   - Latency: <100ms
 
-## 🚀 Scripts
+## Scripts
 
 ```bash
 # Development
@@ -308,7 +313,7 @@ npm run test:unit        # Unit tests only
 npm run test:integration # Integration tests only
 ```
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 real-time-dex-aggregator/
@@ -354,7 +359,7 @@ real-time-dex-aggregator/
 
 ```
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 
 ### Rate Limit Errors
