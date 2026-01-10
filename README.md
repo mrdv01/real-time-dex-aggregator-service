@@ -44,8 +44,10 @@ A production-ready real-time meme coin data aggregation service that fetches dat
    ```
 
 4. **Start Redis**
+   Ensure a local Redis instance is running (default port: 6379).
    ```bash
-   docker-compose up -d
+   # If using local installation
+   redis-server
    ```
 
 5. **Run the development server**
@@ -93,31 +95,45 @@ GET http://localhost:3000/api/tokens?period=24h&sortBy=volume&limit=20
   "success": true,
   "data": [
     {
-      "token_address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-      "token_name": "USD Coin",
-      "token_ticker": "USDC",
-      "price_sol": 0.00234,
-      "market_cap_sol": 1500000,
-      "volume_sol": 50000,
-      "liquidity_sol": 25000,
-      "transaction_count": 1250,
-      "price_1hr_change": 2.5,
-      "protocol": ["raydium", "orca"],
-      "sources": ["dexscreener", "jupiter"],
-      "last_updated": "2024-01-09T10:00:00Z"
-    }
-  ],
-  "pagination": {
-    "nextCursor": "20",
-    "hasMore": true,
-    "total": 150,
-    "limit": 20
-  },
-  "metadata": {
+            "token_address": "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4",
+            "token_name": "Jupiter Perps",
+            "token_ticker": "JLP",
+            "price_sol": 4.725227833611699,
+            "market_cap_sol": 1573927860.9725769,
+            "volume_sol": 10097852.281709624,
+            "volume_1h": 0,
+            "volume_24h": 10097852.281709624,
+            "volume_7d": 0,
+            "liquidity_sol": 17279821.296990458,
+            "transaction_count": 49910,
+            "price_1hr_change": -0.06479667520820694,
+            "price_24h_change": -0.09426930585534606,
+            "price_7d_change": 1.0107776882317538,
+            "protocol": "jupiter",
+            "sources": [
+                "jupiter"
+            ],
+            "last_updated": "2026-01-10T22:44:02.764770414Z"
+        }
+    ],
     "cached": true,
-    "sources": ["dexscreener", "jupiter", "geckoterminal"],
-    "responseTime": "42ms"
-  }
+    "timestamp": "2026-01-10T22:44:34.960Z",
+    "pagination": {
+        "nextCursor": "20",
+        "hasMore": true,
+        "total": 995,
+        "limit": 20
+    },
+    "metadata": {
+        "cached": true,
+        "sources": [
+            "dexscreener",
+            "jupiter",
+            "geckoterminal"
+        ],
+        "timestamp": "2026-01-10T22:44:34.960Z",
+        "responseTime": "251ms"
+    }
 }
 ```
 
