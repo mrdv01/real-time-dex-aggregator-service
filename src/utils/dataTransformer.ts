@@ -35,7 +35,7 @@ export class DataTransformer {
         sources: ['dexscreener'],
         last_updated: new Date().toISOString(),
       }))
-      .filter((t: Token) => t.token_address && t.liquidity_sol > 0);
+      .filter((t: Token) => t.token_address && t.liquidity_sol > 100 && t.volume_sol > 1000);
   }
 
   
@@ -77,7 +77,7 @@ export class DataTransformer {
           last_updated: t.updatedAt || new Date().toISOString(),
         };
       })
-      .filter((t: Token) => t.token_address && t.volume_sol > 0 && t.liquidity_sol > 0);
+      .filter((t: Token) => t.token_address && t.volume_sol > 1000 && t.liquidity_sol > 100);
   }
 
   normalizeGeckoTerminal(data: any): Token[] {
@@ -128,7 +128,7 @@ export class DataTransformer {
         };
       })
       .filter(Boolean)
-      .filter((t: Token) => t.token_address && t.volume_sol > 0 && t.liquidity_sol > 0);
+      .filter((t: Token) => t.token_address && t.volume_sol >   1000 && t.liquidity_sol > 100);
   }
 
  
