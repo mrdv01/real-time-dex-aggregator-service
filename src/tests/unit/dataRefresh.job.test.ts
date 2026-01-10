@@ -13,18 +13,23 @@ describe('DataRefreshJob', () => {
 
 
   const baseToken: Token = {
-    token_address: 'token1',
-    token_name: 'Test Token',
-    token_ticker: 'TEST',
-    price_sol: 1.0,
-    price_1hr_change: 0,
-    volume_sol: 1000,
-    liquidity_sol: 5000,
-    market_cap_sol: 10000,
-    transaction_count: 100,
+    token_address: 'So11111111111111111111111111111111111111112',
+    token_name: 'Wrapped SOL',
+    token_ticker: 'SOL',
+    price_sol: 200,
+    price_1hr_change: 5,
+    price_24h_change: 10,
+    price_7d_change: 15,
+    volume_sol: 1000000,
+    volume_1h: 50000,
+    volume_24h: 1000000,
+    volume_7d: 7000000,
+    liquidity_sol: 500000,
+    market_cap_sol: 100000000,
+    transaction_count: 1000,
     protocol: 'dexscreener',
     sources: ['dexscreener'],
-    last_updated: new Date().toISOString(),
+    last_updated: new Date().toISOString()
   };
 
   beforeEach(() => {
@@ -82,10 +87,10 @@ describe('DataRefreshJob', () => {
       (aggregatorService.getTokens as jest.Mock).mockResolvedValue({ tokens: initialTokens });
       await (dataRefreshJob as any).refreshAndBroadcast();
 
-      // 2. Second run: Volume increases by 1.5x (threshold is 2x)
+      // 2. Second run: Volume increases by 1.1x (threshold is 1.2x)
       const minorIncreaseToken = {
         ...baseToken,
-        volume_sol: baseToken.volume_sol * 1.5,
+        volume_sol: baseToken.volume_sol * 1.1,
         last_updated: new Date().toISOString()
       };
       

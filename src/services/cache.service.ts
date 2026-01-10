@@ -59,7 +59,7 @@ export class CacheService {
 
 
   async warmCache(): Promise<void> {
-    // Base cache service doesn't implement warming override
+    
   }
 
   async getStats(): Promise<{ hits: number; misses: number }> {

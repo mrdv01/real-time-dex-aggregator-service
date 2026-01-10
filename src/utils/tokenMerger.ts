@@ -18,14 +18,18 @@ export class TokenMerger {
         price_sol: this.calculateWeightedPrice(group),
         market_cap_sol: Math.max(...group.map(t => t.market_cap_sol)),
         volume_sol: group.reduce((s, t) => s + t.volume_sol, 0),
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
         liquidity_sol: group.reduce((s, t) => s + t.liquidity_sol, 0),
         transaction_count: group.reduce((s, t) => s + t.transaction_count, 0),
 
         price_1hr_change: mostLiquid.price_1hr_change,
+        price_24h_change: 0,
+        price_7d_change: 0,
         protocol: this.mergeProtocols(group),
         sources: this.mergeSources(group),
         last_updated: this.getMostRecent(group),
-        metadata: mostLiquid.metadata,
       };
     });
   }

@@ -87,28 +87,49 @@ export class AggregatorService {
     const sortBy = filters?.sortBy || 'volume';
     const order = filters?.order || 'desc';
 
+    // Sort
     result.sort((a, b) => {
-      let aValue = 0;
-      let bValue = 0;
+      let valA = 0;
+      let valB = 0;
 
       switch (sortBy) {
         case 'volume':
-          aValue = a.volume_sol;
-          bValue = b.volume_sol;
+          // Dynamic Volume Sorting
+          if (filters?.period === '1h') {
+              valA = a.volume_1h;
+              valB = b.volume_1h;
+          } else if (filters?.period === '7d') {
+              valA = a.volume_7d;
+              valB = b.volume_7d;
+          } else { // 24h default
+              valA = a.volume_24h || a.volume_sol;
+              valB = b.volume_24h || b.volume_sol;
+          }
           break;
+          
         case 'price_change':
-          aValue = a.price_1hr_change;
-          bValue = b.price_1hr_change;
+          // Dynamic Price Change Sorting
+          if (filters?.period === '1h') {
+              valA = a.price_1hr_change;
+              valB = b.price_1hr_change;
+          } else if (filters?.period === '7d') {
+              valA = a.price_7d_change;
+              valB = b.price_7d_change;
+          } else { // 24h
+              valA = a.price_24h_change;
+              valB = b.price_24h_change;
+          }
           break;
+          
         case 'market_cap':
-          aValue = a.market_cap_sol;
-          bValue = b.market_cap_sol;
+          valA = a.market_cap_sol;
+          valB = b.market_cap_sol;
           break;
       }
 
-      return order === 'asc' ? aValue - bValue : bValue - aValue;
+      return order === 'asc' ? valA - valB : valB - valA;
     });
-
+    
     return result;
   }
 

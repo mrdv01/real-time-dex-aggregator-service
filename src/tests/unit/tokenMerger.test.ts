@@ -19,6 +19,11 @@ describe('TokenMerger', () => {
         volume_sol: 100,
         liquidity_sol: 50,
         transaction_count: 10,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 5,
         protocol: 'dex1',
         sources: ['dexscreener'],
@@ -33,6 +38,11 @@ describe('TokenMerger', () => {
         volume_sol: 200,
         liquidity_sol: 75,
         transaction_count: 15,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 3,
         protocol: 'dex2',
         sources: ['jupiter'],
@@ -60,6 +70,11 @@ describe('TokenMerger', () => {
         volume_sol: 100,
         liquidity_sol: 100,
         transaction_count: 10,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 0,
         protocol: 'dex1',
         sources: ['dexscreener'],
@@ -74,6 +89,11 @@ describe('TokenMerger', () => {
         volume_sol: 200,
         liquidity_sol: 100,
         transaction_count: 20,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 0,
         protocol: 'dex2',
         sources: ['jupiter'],
@@ -83,7 +103,7 @@ describe('TokenMerger', () => {
 
     const result = tokenMerger.merge(tokens);
 
-    expect(result[0].price_sol).toBe(1.5); // Weighted average: (1.0 * 100 + 2.0 * 100) / 200
+    expect(result[0].price_sol).toBe(1.5); 
   });
 
   test('should prefer data from most liquid source', () => {
@@ -97,6 +117,11 @@ describe('TokenMerger', () => {
         volume_sol: 100,
         liquidity_sol: 50,
         transaction_count: 10,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 2,
         protocol: 'dex1',
         sources: ['dexscreener'],
@@ -111,6 +136,11 @@ describe('TokenMerger', () => {
         volume_sol: 200,
         liquidity_sol: 200,
         transaction_count: 20,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 5,
         protocol: 'dex2',
         sources: ['jupiter'],
@@ -122,7 +152,7 @@ describe('TokenMerger', () => {
 
     expect(result[0].token_name).toBe('High Liquidity');
     expect(result[0].token_ticker).toBe('HIGH');
-    expect(result[0].price_1hr_change).toBe(5); // From most liquid source
+    expect(result[0].price_1hr_change).toBe(5); 
   });
 
   test('should handle single token without merging', () => {
@@ -136,6 +166,11 @@ describe('TokenMerger', () => {
         volume_sol: 100,
         liquidity_sol: 50,
         transaction_count: 10,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 0,
         protocol: 'dex1',
         sources: ['dexscreener'],
@@ -160,6 +195,11 @@ describe('TokenMerger', () => {
         volume_sol: 100,
         liquidity_sol: 50,
         transaction_count: 10,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 0,
         protocol: 'raydium',
         sources: ['dexscreener'],
@@ -174,6 +214,11 @@ describe('TokenMerger', () => {
         volume_sol: 150,
         liquidity_sol: 75,
         transaction_count: 15,
+        volume_1h: 0,
+        volume_24h: 0,
+        volume_7d: 0,
+        price_24h_change: 0,
+        price_7d_change: 0,
         price_1hr_change: 0,
         protocol: 'orca',
         sources: ['jupiter'],

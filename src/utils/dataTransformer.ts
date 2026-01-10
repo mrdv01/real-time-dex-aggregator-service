@@ -2,9 +2,6 @@ import { Token } from '../types';
 
 export class DataTransformer {
 
-  /* ============================
-     DEXSCREENER (ALREADY OK)
-     ============================ */
   normalizeDexScreener(data: any): Token[] {
     if (!data?.pairs) return [];
 
@@ -17,7 +14,12 @@ export class DataTransformer {
 
         price_sol: Number(pair.priceNative || 0),
         market_cap_sol: Number(pair.fdv || 0),
-        volume_sol: Number(pair.volume?.h24 || 0),
+        
+        volume_sol: Number(pair.volume?.h24 || 0), 
+        volume_1h: Number(pair.volume?.h1 || 0),
+        volume_24h: Number(pair.volume?.h24 || 0),
+        volume_7d: Number(pair.volume?.h24 || 0), 
+
         liquidity_sol: Number(pair.liquidity?.usd || 0),
 
         transaction_count:
@@ -25,6 +27,9 @@ export class DataTransformer {
           (pair.txns?.h24?.sells || 0),
 
         price_1hr_change: Number(pair.priceChange?.h1 || 0),
+        price_24h_change: Number(pair.priceChange?.h24 || 0),
+        price_7d_change: Number(pair.priceChange?.h6 || 0), 
+
         protocol: pair.dexId || 'dexscreener',
 
         sources: ['dexscreener'],
@@ -33,9 +38,7 @@ export class DataTransformer {
       .filter((t: Token) => t.token_address && t.liquidity_sol > 0);
   }
 
-  /* ============================
-     JUPITER (FIXED)
-     ============================ */
+  
   normalizeJupiter(data: any): Token[] {
     if (!Array.isArray(data)) return [];
 
@@ -52,7 +55,12 @@ export class DataTransformer {
 
           price_sol: Number(t.usdPrice || 0),
           market_cap_sol: Number(t.mcap || 0),
+          
           volume_sol: volume24h,
+          volume_1h: 0,
+          volume_24h: volume24h,
+          volume_7d: 0, 
+
           liquidity_sol: Number(t.liquidity || 0),
 
           transaction_count:
@@ -60,6 +68,9 @@ export class DataTransformer {
             (t.stats24h?.numSells || 0),
 
           price_1hr_change: Number(t.stats1h?.priceChange || 0),
+          price_24h_change: Number(t.stats24h?.priceChange || 0),
+          price_7d_change: Number(t.stats7d?.priceChange || 0),
+
           protocol: 'jupiter',
 
           sources: ['jupiter'],
@@ -69,9 +80,6 @@ export class DataTransformer {
       .filter((t: Token) => t.token_address && t.volume_sol > 0 && t.liquidity_sol > 0);
   }
 
-  /* ============================
-     GECKOTERMINAL (CRITICAL FIX)
-     ============================ */
   normalizeGeckoTerminal(data: any): Token[] {
     if (!data || !Array.isArray(data.data)) return [];
 
@@ -94,7 +102,12 @@ export class DataTransformer {
 
           price_sol: Number(attrs.base_token_price_native_currency || 0),
           market_cap_sol: Number(attrs.market_cap_usd || 0),
+          
           volume_sol: Number(attrs.volume_usd?.h24 || 0),
+          volume_1h: Number(attrs.volume_usd?.h1 || 0),
+          volume_24h: Number(attrs.volume_usd?.h24 || 0),
+          volume_7d: 0,
+
           liquidity_sol: Number(attrs.reserve_in_usd || 0),
 
           transaction_count:
@@ -103,6 +116,10 @@ export class DataTransformer {
 
           price_1hr_change:
             Number(attrs.price_change_percentage?.h1 || 0),
+          price_24h_change:
+            Number(attrs.price_change_percentage?.h24 || 0),
+          price_7d_change:
+            Number(attrs.price_change_percentage?.h24 || 0), 
 
           protocol: pool.relationships?.dex?.data?.id || 'geckoterminal',
 
@@ -114,9 +131,7 @@ export class DataTransformer {
       .filter((t: Token) => t.token_address && t.volume_sol > 0 && t.liquidity_sol > 0);
   }
 
-  /* ============================
-     ROUTER
-     ============================ */
+ 
   normalize(
     data: any,
     source: 'dexscreener' | 'jupiter' | 'geckoterminal'

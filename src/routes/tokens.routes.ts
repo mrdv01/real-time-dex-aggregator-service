@@ -113,7 +113,7 @@ router.get('/stats', async (_req: Request, res: Response, next: NextFunction) =>
     const response: StatsResponse = {
       totalRequests,
       cacheHitRate,
-      averageResponseTime: 0, // Can be tracked with middleware
+      averageResponseTime: 0, 
       activeWebSocketConnections: websocketService.getConnectedClients(),
     };
 

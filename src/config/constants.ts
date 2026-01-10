@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 export const API_URLS = {
   DEXSCREENER: process.env.DEXSCREENER_BASE_URL || 'https://api.dexscreener.com/latest/dex',
-  JUPITER_PRICE: process.env.JUPITER_PRICE_URL || 'https://api.jup.ag/price/v2', // Specific to Price API
-  JUPITER_TOKENS: 'https://api.jup.ag', // Using primary API domain which is reachable (tokens.jup.ag has DNS issues)
+  JUPITER_PRICE: process.env.JUPITER_PRICE_URL || 'https://api.jup.ag/price/v2', 
+  JUPITER_TOKENS: 'https://api.jup.ag', 
   GECKOTERMINAL: process.env.GECKOTERMINAL_BASE_URL || 'https://api.geckoterminal.com/api/v2',
 };
 
