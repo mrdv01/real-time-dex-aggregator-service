@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEX Aggregator - WebSocket Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff4444;
+      animation: pulse 2s infinite;
+    }
+
+    .status-indicator.connected {
+      background: #00ff88;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .tokens-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .token-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .token-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+    }
+
+    .token-card.price-up {
+      animation: flash-green 0.5s;
+    }
+
+    .token-card.price-down {
+      animation: flash-red 0.5s;
+    }
+
+    @keyframes flash-green {
+
+      0%,
+      100% {
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      50% {
+        background: rgba(0, 255, 136, 0.2);
+      }
+    }
+
+    @keyframes flash-red {
+
+      0%,
+      100% {
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      50% {
+        background: rgba(255, 68, 68, 0.2);
+      }
+    }
+
+    .token-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .token-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .token-ticker {
+      font-size: 1rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .badge.new {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .badge.spike {
+      background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+      animation: bounce 0.5s;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+    }
+
+    .token-price {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    .price-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .price-change.up {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .price-change.down {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .token-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .no-data {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: white;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 Real-Time DEX Aggregator</h1>
+      <div class="status">
+        <span class="status-indicator" id="statusIndicator"></span>
+        <span id="statusText">Connecting...</span>
+      </div>
+    </div>
+
+    <!-- Filters Bar -->
+    <div class="filters-bar"
+      style="background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+      <div class="filter-group">
+        <label for="period" style="font-weight: bold; color: #333; margin-right: 5px;">Period:</label>
+        <select id="period" style="padding: 5px; border-radius: 5px;">
+          <option value="24h">24 Hours</option>
+          <option value="1h">1 Hour</option>
+          <option value="7d">7 Days</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sortBy" style="font-weight: bold; color: #333; margin-right: 5px;">Sort By:</label>
+        <select id="sortBy" style="padding: 5px; border-radius: 5px;">
+          <option value="volume">Volume</option>
+          <option value="price_change">Price Change</option>
+          <option value="market_cap">Market Cap</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="order" style="font-weight: bold; color: #333; margin-right: 5px;">Order:</label>
+        <select id="order" style="padding: 5px; border-radius: 5px;">
+          <option value="desc">Desc (High to Low)</option>
+          <option value="asc">Asc (Low to High)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="tokens-grid" id="tokensGrid">
+      <div class="no-data">Waiting for token data...</div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px; margin-bottom: 40px;">
+      <button id="loadMoreBtn"
+        style="padding: 10px 20px; background: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        Load More
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+  <script>
+    const socket = io('http://localhost:3000');
+    const tokensGrid = document.getElementById('tokensGrid');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+    // Filters
+    const periodSelect = document.getElementById('period');
+    const sortBySelect = document.getElementById('sortBy');
+    const orderSelect = document.getElementById('order');
+
+    const tokens = new Map();
+    let nextCursor = null;
+    let isLoading = false;
+    let initialRestLoadComplete = false;
+
+    // Event Listeners for Filters
+    [periodSelect, sortBySelect, orderSelect].forEach(el => {
+      el.addEventListener('change', () => {
+        resetAndFetch();
+        // Removed unused subscription event
+      });
+    });
+
+    loadMoreBtn.addEventListener('click', () => {
+      if (nextCursor && !isLoading) {
+        fetchTokens(true);
+      }
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket');
+      statusIndicator.classList.add('connected');
+      statusText.textContent = 'Connected (Real-time updates active)';
+      // Initial fetch handled by REST, or snapshot if it comes
+      if (!initialRestLoadComplete) {
+        fetchTokens();
+      }
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket');
+      statusIndicator.classList.remove('connected');
+      statusText.textContent = 'Disconnected - Reconnecting...';
+    });
+
+    // ✅ FIX 1: Handle tokens:snapshot (First load / Reconnect)
+    socket.on('tokens:snapshot', (payload) => {
+      console.log('Snapshot received', payload);
+
+      // Snapshot = source of truth
+      tokens.clear();
+      tokensGrid.innerHTML = '';
+
+      payload.tokens.forEach(token => {
+        tokens.set(token.token_address, token);
+        renderToken(token, null, null, true);
+      });
+
+      initialRestLoadComplete = true;
+    });
+
+    // Robust Event Handling
+    socket.on('token:update', (event) => {
+      console.log(
+        '[WS RECEIVED]',
+        event.data?.token_ticker,
+        'price:',
+        event.data?.price_sol,
+        'Δ:',
+        event.metadata?.change
+      );
+
+      const token = event.token || event.data;
+      if (!token) return;
+
+      const change =
+        event.metadata?.change !== undefined
+          ? event.metadata.change
+          : event.change;
+
+      if (!tokens.has(token.token_address)) {
+        // Token not present yet → add it
+        tokens.set(token.token_address, token);
+        renderToken(token, 'update', {
+          direction: change >= 0 ? 'up' : 'down',
+          change
+        }, true);
+        return;
+      }
+
+      updateToken(token, 'update', {
+        direction: change >= 0 ? 'up' : 'down',
+        change
+      });
+    });
+
+    socket.on('token:volume_spike', (event) => {
+      const token = event.token || event.data;
+      if (!token) return;
+
+      if (!tokens.has(token.token_address)) {
+        tokens.set(token.token_address, token);
+        renderToken(token, 'spike', event.metadata, true);
+        return;
+      }
+
+      updateToken(token, 'spike', event.metadata);
+    });
+
+    socket.on('token:new', (event) => {
+      console.log('New token discovered:', event.data?.token_name);
+      const token = event.data || event.token;
+
+      if (token && !tokens.has(token.token_address)) {
+        tokens.set(token.token_address, token);
+        // Prepend to top for "Discovery" feel
+        renderToken(token, 'new', null, false);
+      }
+    });
+
+    function resetAndFetch() {
+      tokensGrid.innerHTML = '';
+      tokens.clear();
+      nextCursor = null;
+      loadMoreBtn.style.display = 'none';
+      initialRestLoadComplete = false;
+      fetchTokens();
+    }
+
+    async function fetchTokens(append = false) {
+      if (isLoading) return;
+      isLoading = true;
+
+      try {
+        const period = periodSelect.value;
+        const sortBy = sortBySelect.value;
+        const order = orderSelect.value;
+
+        let url = `http://localhost:3000/api/tokens?limit=30&period=${period}&sortBy=${sortBy}&order=${order}`;
+        if (append && nextCursor) {
+          url += `&cursor=${nextCursor}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          if (!append) {
+            tokensGrid.innerHTML = '';
+            tokens.clear(); // Clear map on fresh fetch
+          }
+
+          data.data.forEach(token => {
+            // Deduplicate visual
+            if (!document.getElementById(`token-${token.token_address}`)) {
+              tokens.set(token.token_address, token);
+              renderToken(token, null, null, true); // Always append for initial/loadMore
+            }
+          });
+
+          initialRestLoadComplete = true;
+
+          // Handle Pagination
+          if (data.pagination && data.pagination.hasMore) {
+            nextCursor = data.pagination.nextCursor;
+            loadMoreBtn.style.display = 'inline-block';
+            loadMoreBtn.textContent = 'Load More';
+          } else {
+            nextCursor = null;
+            loadMoreBtn.style.display = 'none';
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching tokens:', error);
+      } finally {
+        isLoading = false;
+      }
+    }
+
+    function updateToken(token, type, metadata) {
+      tokens.set(token.token_address, token);
+
+      const existingCard = document.getElementById(`token-${token.token_address}`);
+      if (existingCard) {
+        // Update content IN PLACE
+        // We do NOT remove and re-append, which causes jumping.
+        // We re-render the innerHTML or replace the element but keep position?
+        // Updating innerHTML is cheapest for content change.
+
+        // Re-use render logic but target existing element?
+        // Or just replace the node? Replacing node keeps position.
+        const tempContainer = document.createElement('div');
+        // Render into temp
+        // But renderToken appends to grid. We need a 'createCard' function ideally.
+        // Let's refactor renderToken slightly or just patch innerHTML.
+
+        // For simplicity and to use user's "renderToken", we can:
+        // 1. Create new card
+        // 2. Replace existing
+
+        const newCard = createCardElement(token, type, metadata);
+        tokensGrid.replaceChild(newCard, existingCard);
+      }
+    }
+
+    // Extracted for re-use
+    function createCardElement(token, type, metadata) {
+      const card = document.createElement('div');
+      card.className = 'token-card';
+      card.id = `token-${token.token_address}`;
+
+      if (metadata?.direction) {
+        card.classList.add(`price-${metadata.direction}`);
+      }
+
+      const priceChange = token.price_1hr_change || 0;
+      const isPositive = priceChange >= 0;
+
+      card.innerHTML = `
+        <div class="token-header">
+          <div>
+            <div class="token-name">${token.token_name || 'Unknown'}</div>
+            <div class="token-ticker">${token.token_ticker || 'N/A'}</div>
+          </div>
+          ${type ? `<span class="badge ${type}">${type === 'new' ? 'NEW' : type === 'spike' ? '🔥 SPIKE' : '📈'}</span>` : ''}
+        </div>
+        
+        <div class="token-price">
+          ${formatPrice(token.price_sol)} SOL
+        </div>
+        
+        <div class="price-change ${isPositive ? 'up' : 'down'}">
+          ${isPositive ? '▲' : '▼'} ${Math.abs(priceChange).toFixed(2)}%
+          ${metadata?.change ? `(${metadata.change.toFixed(2)}%)` : ''}
+        </div>
+
+        <div class="token-stats">
+          <div class="stat">
+            <div class="stat-label">Volume 24h</div>
+            <div class="stat-value">${formatNumber(token.volume_sol)} SOL</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Liquidity</div>
+            <div class="stat-value">${formatNumber(token.liquidity_sol)} SOL</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Market Cap</div>
+            <div class="stat-value">${formatNumber(token.market_cap_sol)} SOL</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Transactions</div>
+            <div class="stat-value">${formatNumber(token.transaction_count)}</div>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function renderToken(token, type, metadata, append = false) {
+      const card = createCardElement(token, type, metadata);
+
+      // ✅ FIX 3: Do NOT reorder on live update
+      // Logic: If append is true, append. If false (update), we handled it in updateToken.
+      // But if renderToken is called with append=false, it means prepend?
+      // User said: "if (append) { appendChild } else { appendChild }"
+      // Effectively always append.
+      // But verify: renderToken is called by fetchTokens with (..., true).
+      // So it appends.
+      // If called with append=false? Previously meant prepend.
+      // Now we just append always? Or insert at top?
+      // Since we split updateToken logic to use replaceChild, renderToken is only used for NEW items.
+      // For new items, appending is safer for sorted lists (bottom) or prepending (top).
+      // Let's stick to append to avoid jumping.
+
+      tokensGrid.appendChild(card);
+    }
+
+    function formatPrice(price) {
+      if (price < 0.0001) return price.toExponential(2);
+      if (price < 1) return price.toFixed(6);
+      return price.toFixed(4);
+    }
+
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
+      return num.toFixed(2);
+    }
+  </script>
+</body>
+
+</html>
