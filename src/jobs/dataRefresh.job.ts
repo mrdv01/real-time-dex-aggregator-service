@@ -9,8 +9,7 @@ export class DataRefreshJob {
   private previousData: Map<string, Token> = new Map();
 
   start(): void {
-    // Run every 10 seconds to ensure quick updates (was 60s, but real-time needs speed)
-    // User requested */10
+    
     this.job = cron.schedule('*/10 * * * * *', async () => {
       try {
         console.log('[Job] Refreshing data & broadcasting...');
@@ -31,17 +30,15 @@ export class DataRefreshJob {
   }
 
   private async refreshAndBroadcast(): Promise<void> {
-    // 1. Fetch latest data (also warms cache)
     const { tokens } = await aggregatorService.getTokens();
 
-    // 2. First run -> Snapshot only
+  
     if (this.previousData.size === 0) {
       tokens.forEach(t => this.previousData.set(t.token_address, t));
       websocketService.broadcastSnapshot(tokens);
       return;
     }
 
-    // 3. Subsequent runs -> Check for deltas
     for (const token of tokens) {
       const previous = this.previousData.get(token.token_address);
 
@@ -61,9 +58,26 @@ export class DataRefreshJob {
               },
             });
           }
+
+          // Check for Volume Spike
+          if (previous.volume_sol > 0) {
+            const volumeMultiplier = token.volume_sol / previous.volume_sol;
+
+            if (volumeMultiplier >= WEBSOCKET_CONFIG.VOLUME_SPIKE_MULTIPLIER) {
+              websocketService.broadcastDelta('token:volume_spike', {
+                type: 'token:volume_spike',
+                data: token,
+                timestamp: new Date().toISOString(),
+                metadata: {
+                  change: volumeMultiplier,
+                  direction: 'up',
+                },
+              });
+            }
+          }
         }
       } else {
-        // New token discovered -> Broadcast "token:new"
+        // New token discovered  Broadcast "token:new"
         websocketService.broadcastDelta('token:new', {
           type: 'token:new',
           data: token,
