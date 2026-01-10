@@ -1,8 +1,8 @@
-# 🚀 Real-Time DEX Aggregator
+# Real-Time DEX Aggregator
 
 A production-ready real-time meme coin data aggregation service that fetches data from multiple DEX APIs (DexScreener, Jupiter, GeckoTerminal), implements intelligent Redis caching, provides WebSocket updates, and offers filtering/sorting capabilities.
 
-## ✨ Features
+## Features
 
 - **Multi-DEX Integration**: Fetches data from DexScreener, Jupiter, and GeckoTerminal APIs in parallel
 - **Intelligent Caching**: Redis-backed cache with 30s TTL for optimal performance
@@ -11,13 +11,13 @@ A production-ready real-time meme coin data aggregation service that fetches dat
 - **Real-Time Updates**: WebSocket support for live price changes and volume spikes
 - **REST API**: Comprehensive endpoints with filtering, sorting, and pagination
 - **Type-Safe**: Full TypeScript implementation with strict typing
-- **Well-Tested**: 70%+ code coverage with unit and integration tests
+- **Well-Tested**:code coverage with unit and integration tests
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 18+ and npm
 - Redis 7+ (via Docker or local installation)
-- (Optional) GeckoTerminal API key
+- Jupiter API key
 
 ## 🛠️ Installation
 
@@ -58,7 +58,7 @@ The server will start at `http://localhost:3000`.
 | `PORT` | Server port | `3000` |
 | `REDIS_URL` | Redis connection URL | `redis://localhost:6379` |
 | `CACHE_TTL` | Cache time-to-live in seconds | `30` |
-| `GECKOTERMINAL_API_KEY` | GeckoTerminal API key (optional) | - |
+| `JUPITER_API_KEY` | Jupiter API key | - |
 | `WS_UPDATE_INTERVAL` | WebSocket update interval (ms) | `10000` |
 | `WS_PRICE_CHANGE_THRESHOLD` | Price change threshold for notifications (%) | `5` |
 
@@ -202,7 +202,7 @@ Connect to WebSocket at `ws://localhost:3000`.
   socket.emit('unsubscribe', { period: '24h' });
   ```
 
-## 🎨 WebSocket Demo
+## WebSocket Demo
 
 Open `demo/websocket-client.html` in your browser to see real-time updates in action.
 
@@ -212,7 +212,7 @@ Features:
 - Volume spike notifications
 - Multi-tab synchronization
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -231,9 +231,9 @@ npm run test:integration
 npm test -- --coverage
 ```
 
-**Test Coverage**: 70%+ (branches, functions, lines, statements)
 
-## 🏗️ Architecture
+
+## Architecture
 
 ```
 ┌─────────────────┐
@@ -270,7 +270,7 @@ npm test -- --coverage
 4. **Cache Service**: Cache-aside pattern with configurable TTL
 5. **WebSocket Service**: Real-time updates every 10 seconds
 
-## 📊 Performance
+## Performance
 
 - **API Response Time**:
   - First request (cache miss): ~200-250ms
@@ -348,26 +348,14 @@ real-time-dex-aggregator/
 ├── demo/                   # Demo assets
 │   ├── websocket-client.html
 │   └── demo-script.md
-├── docker-compose.yml
 ├── package.json
 ├── tsconfig.json
-└── README.md
+├── README.md
+
 ```
 
 ## 🔍 Troubleshooting
 
-### Redis Connection Issues
-
-```bash
-# Check Redis is running
-docker ps
-
-# View Redis logs
-docker logs dex-aggregator-redis
-
-# Restart Redis
-docker-compose restart redis
-```
 
 ### Rate Limit Errors
 
@@ -383,21 +371,8 @@ The system implements automatic retry with exponential backoff. If you consisten
 GET http://localhost:3000/api/health
 
 # Clear Redis cache
-redis-cli FLUSHALL
+npx ts-node scripts/clear-cache.ts
 ```
 
-## 📝 License
-
-MIT
-
-## 🤝 Contributing
-
-Contributions welcome! Please open an issue or submit a pull request.
-
-## 📧 Contact
-
-For questions or support, please open an issue in the repository.
-
----
 
 **Built with** ❤️ **using TypeScript, Express, Socket.io, and Redis**
