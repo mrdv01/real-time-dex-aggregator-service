@@ -339,7 +339,7 @@
       statusText.textContent = 'Disconnected - Reconnecting...';
     });
 
-    // ✅ FIX 1: Handle tokens:snapshot (First load / Reconnect)
+    //  FIX 1: Handle tokens:snapshot (First load / Reconnect)
     socket.on('tokens:snapshot', (payload) => {
       console.log('Snapshot received', payload);
 
