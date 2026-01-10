@@ -7,6 +7,13 @@ import { WEBSOCKET_CONFIG } from '../../config/constants';
 // Mock dependencies
 jest.mock('../../services/aggregator.service');
 jest.mock('../../services/websocket.service');
+jest.mock('../../config/constants', () => ({
+  ...jest.requireActual('../../config/constants'),
+  WEBSOCKET_CONFIG: {
+    ...jest.requireActual('../../config/constants').WEBSOCKET_CONFIG,
+    VOLUME_SPIKE_MULTIPLIER: 1.2,
+  },
+}));
 
 describe('DataRefreshJob', () => {
   let dataRefreshJob: DataRefreshJob;

@@ -75,7 +75,7 @@ describe('DataTransformer', () => {
             baseToken: { address: 'SOL123', name: 'SOL Token', symbol: 'SOLTKN' },
             priceNative: '2.0',
             fdv: '2000',
-            volume: { h24: '200' },
+            volume: { h24: '2000' },
             liquidity: { usd: '1000' },
             txns: { h24: { buys: 20, sells: 10 } },
             priceChange: { h1: '5' },
