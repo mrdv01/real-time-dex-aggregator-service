@@ -36,3 +36,6 @@ coverage/
 
 # Redis
 dump.rdb
+
+# Demo
+demo/demo-script.md
